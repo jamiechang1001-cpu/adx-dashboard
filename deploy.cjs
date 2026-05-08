@@ -25,6 +25,20 @@ function copyDir(src, dest) {
   }
 }
 
+function cleanDeployDir(dir) {
+  if (!fs.existsSync(dir)) return;
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.name === '.git') continue;
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      fs.rmSync(fullPath, { recursive: true, force: true });
+    } else {
+      fs.unlinkSync(fullPath);
+    }
+  }
+}
+
 console.log('Pushing source code to main branch...');
 run(`${GIT} add -A`, __dirname);
 try {
@@ -38,7 +52,7 @@ console.log('\nBuilding project...');
 run('npm run build', __dirname);
 
 console.log('\nCopying dist to deploy...');
-fs.rmSync(DEPLOY_DIR, { recursive: true, force: true });
+cleanDeployDir(DEPLOY_DIR);
 copyDir(DIST_DIR, DEPLOY_DIR);
 
 console.log('\nDeploying to GitHub Pages...');
