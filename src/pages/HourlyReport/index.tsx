@@ -242,24 +242,26 @@ export default function HourlyReport() {
             />
 
             <svg
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'visible' }}
             >
               <polyline
                 fill="none"
                 stroke="#1890ff"
-                strokeWidth={2}
+                strokeWidth={0.8}
                 points={chartValues
                   .map((v, i) => {
                     const x = (i / (chartValues.length - 1)) * 100;
                     const y = 100 - ((v - minVal) / range) * 100;
-                    return `${x}% ${y}%`;
+                    return `${x},${y}`;
                   })
-                  .join(', ')}
+                  .join(' ')}
               />
               {chartValues.map((v, i) => {
                 const x = (i / (chartValues.length - 1)) * 100;
                 const y = 100 - ((v - minVal) / range) * 100;
-                return <circle key={i} cx={`${x}%`} cy={`${y}%`} r={3} fill="#1890ff" />;
+                return <circle key={i} cx={x} cy={y} r={1.5} fill="#1890ff" />;
               })}
             </svg>
 

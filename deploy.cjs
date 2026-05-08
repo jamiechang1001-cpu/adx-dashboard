@@ -25,7 +25,16 @@ function copyDir(src, dest) {
   }
 }
 
-console.log('Building project...');
+console.log('Pushing source code to main branch...');
+run(`${GIT} add -A`, __dirname);
+try {
+  run(`${GIT} commit -m "Update source: ${new Date().toISOString()}"`, __dirname);
+} catch {
+  console.log('No source changes to commit');
+}
+run(`${GIT} push origin main`, __dirname);
+
+console.log('\nBuilding project...');
 run('npm run build', __dirname);
 
 console.log('\nCopying dist to deploy...');
@@ -35,9 +44,9 @@ copyDir(DIST_DIR, DEPLOY_DIR);
 console.log('\nDeploying to GitHub Pages...');
 run(`${GIT} add -A`, DEPLOY_DIR);
 try {
-  run(`${GIT} commit -m "Update: ${new Date().toISOString()}"`, DEPLOY_DIR);
+  run(`${GIT} commit -m "Update pages: ${new Date().toISOString()}"`, DEPLOY_DIR);
 } catch {
-  console.log('No changes to commit');
+  console.log('No page changes to commit');
 }
 run(`${GIT} push origin gh-pages`, DEPLOY_DIR);
 
