@@ -62,7 +62,7 @@ try {
 } catch {
   console.log('No page changes to commit');
 }
-run(`${GIT} push origin gh-pages`, DEPLOY_DIR);
+run(`${GIT} push origin master:gh-pages`, DEPLOY_DIR);
 
 console.log('\nDone! Your site will be live shortly at:');
 console.log('https://jamiechang1001-cpu.github.io/adx-dashboard/');
