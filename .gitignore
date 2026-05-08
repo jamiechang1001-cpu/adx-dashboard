@@ -23,3 +23,7 @@ npm-debug.log*
 
 # Misc
 *.local
+
+# Excluded files
+reports/
+src/pages/ContentPool/index.tsx
