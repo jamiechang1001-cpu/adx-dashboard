@@ -1,0 +1,83 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f2f5;
+}
+
+.logo {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 8px;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ant-menu-light .ant-menu-item-selected {
+  background-color: #fff0f6 !important;
+  color: #eb2f96 !important;
+  border-right: 3px solid #eb2f96;
+}
+
+.ant-menu-light .ant-menu-item:hover {
+  color: #eb2f96 !important;
+}
+
+.ant-menu-light .ant-menu-submenu-title:hover {
+  color: #eb2f96 !important;
+}
+
+.ant-menu-light .ant-menu-item-selected::after {
+  display: none;
+}
+
+.ant-btn-link {
+  padding: 0 4px;
+}
+
+.ant-btn-link:hover {
+  opacity: 0.8;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa !important;
+  font-weight: 500;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: #fff0f6 !important;
+}
+
+.ant-breadcrumb a:hover {
+  color: #eb2f96;
+}
+
+.ant-tag-green {
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+  color: #52c41a;
+}
+
+.ant-tag-orange {
+  background-color: #fff7e6;
+  border-color: #ffd591;
+  color: #fa8c16;
+}
+
+.ant-tag-blue {
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+  color: #1890ff;
+}

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>带话题发帖，必得红包</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f5f5f7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ====== 方案切换器 ====== */
+    .scheme-tabs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+    }
+    .scheme-tab {
+      padding: 8px 24px;
+      border-radius: 100px;
+      border: 1.5px solid transparent;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #666;
+    }
+    .scheme-tab:hover { background: rgba(0,0,0,0.04); }
+    .scheme-tab.active {
+      border-color: #eb2f96;
+      color: #eb2f96;
+      background: rgba(235,47,150,0.06);
+    }
+
+    /* ====== 方案面板 ====== */
+    .scheme-panel {
+      display: none;
+      padding-top: 60px;
+    }
+    .scheme-panel.active { display: block; }
+
+    /* ============================================
+       方案 A - 活力红包版（明亮温暖，强调"必得"）
+       ============================================ */
+    .scheme-a {
+      --primary: #eb2f96;
+      --primary-light: #fff0f6;
+      --accent: #ff6b35;
+      --bg: #fff5f7;
+      --surface: #ffffff;
+      --text: #1a1a2e;
+      --text-secondary: #666;
+    }
+    .scheme-a .hero {
+      background: var(--primary);
+      position: relative;
+      overflow: hidden;
+      padding: 80px 24px 100px;
+      text-align: center;
+    }
+    .scheme-a .hero::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 70%, rgba(255,107,53,0.2) 0%, transparent 40%);
+      animation: float 8s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-20px, -20px) rotate(2deg); }
+    }
+    .scheme-a .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .scheme-a .hero-badge .dot {
+      width: 8px; height: 8px;
+      background: #00e676;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+    .scheme-a .hero h1 {
+      font-size: 48px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .scheme-a .hero h1 span {
+      display: inline-block;
+      background: linear-gradient(135deg, #ffe082, #ff8f00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .scheme-a .hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.85);
+      position: relative;
+      z-index: 1;
+    }
+    .scheme-a .reward-card {
+      max-width: 360px;
+      margin: -40px auto 0;
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(235,47,150,0.15), 0 4px 12px rgba(0,0,0,0.08);
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .scheme-a .reward-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #eb2f96, #ff6b35);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 36px;
+      color: #fff;
+      position: relative;
+    }
+    .scheme-a .reward-icon::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #eb2f96, #ff6b35);
+      opacity: 0.3;
+      z-index: -1;
+      animation: pulse 2s infinite;
+    }
+    .scheme-a .reward-amount {
+      font-size: 56px;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .scheme-a .reward-amount small {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .scheme-a .reward-label {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+    .scheme-a .progress-section {
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    .scheme-a .progress-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .scheme-a .progress-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .scheme-a .step {
+      width: 64px; height: 64px;
+      border-radius: 20px;
+      background: var(--primary-light);
+      border: 2px dashed var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .scheme-a .step.done {
+      background: var(--primary);
+      border-style: solid;
+      color: #fff;
+    }
+    .scheme-a .step-arrow {
+      color: var(--primary);
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .scheme-a .step-labels {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .scheme-a .step-labels span {
+      width: 64px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .scheme-a .rules {
+      max-width: 480px;
+      margin: 0 auto 40px;
+      padding: 0 24px;
+    }
+    .scheme-a .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .scheme-a .rule-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .scheme-a .rule-text {
+      flex: 1;
+    }
+    .scheme-a .rule-text h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .scheme-a .rule-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .scheme-a .cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px 24px;
+      background: linear-gradient(to top, rgba(255,255,255,1) 60%, rgba(255,255,255,0));
+      z-index: 100;
+    }
+    .scheme-a .cta-btn {
+      display: block;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 18px 32px;
+      background: linear-gradient(135deg, #eb2f96, #ff6b35);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(235,47,150,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .scheme-a .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(235,47,150,0.4);
+    }
+    .scheme-a .cta-note {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-top: 10px;
+    }
+
+    /* ============================================
+       方案 B - 极简聚焦版（干净清晰，信息层级）
+       ============================================ */
+    .scheme-b {
+      --primary: #eb2f96;
+      --bg: #ffffff;
+      --surface: #fafafa;
+      --text: #111;
+      --text-secondary: #666;
+      --border: #e8e8e8;
+    }
+    .scheme-b .hero {
+      padding: 100px 24px 60px;
+      text-align: center;
+      background: var(--bg);
+    }
+    .scheme-b .hero-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 24px;
+      padding: 6px 16px;
+      border: 1.5px solid var(--primary);
+      border-radius: 100px;
+    }
+    .scheme-b .hero h1 {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .scheme-b .hero-sub {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .scheme-b .core-card {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 48px 32px;
+      background: var(--surface);
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .scheme-b .core-equation {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .scheme-b .core-num {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .scheme-b .core-unit {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .scheme-b .core-eq {
+      font-size: 28px;
+      color: var(--border);
+      font-weight: 300;
+    }
+    .scheme-b .core-result {
+      background: var(--primary);
+      color: #fff;
+      padding: 16px 28px;
+      border-radius: 8px;
+    }
+    .scheme-b .core-result .core-num {
+      color: #fff;
+      font-size: 40px;
+    }
+    .scheme-b .core-result .core-unit {
+      color: rgba(255,255,255,0.8);
+    }
+    .scheme-b .core-note {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .scheme-b .rules {
+      max-width: 480px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+    .scheme-b .rule-item {
+      display: flex;
+      gap: 20px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .scheme-b .rule-num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+      opacity: 0.3;
+      width: 40px;
+      flex-shrink: 0;
+    }
+    .scheme-b .rule-text h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .scheme-b .rule-text p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .scheme-b .cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px 24px;
+      background: linear-gradient(to top, #fff 50%, transparent);
+      z-index: 100;
+    }
+    .scheme-b .cta-btn {
+      display: block;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 18px 32px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .scheme-b .cta-btn:hover {
+      background: #d41a82;
+      transform: translateY(-1px);
+    }
+
+    /* ============================================
+       方案 C - 沉浸氛围版（大色块，强视觉冲击）
+       ============================================ */
+    .scheme-c {
+      --primary: #eb2f96;
+      --accent: #00e5ff;
+      --bg: #0a0a0f;
+      --surface: #14141f;
+      --text: #fff;
+      --text-secondary: rgba(255,255,255,0.5);
+    }
+    .scheme-c .hero {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      padding: 100px 24px 80px;
+      text-align: center;
+    }
+    .scheme-c .hero::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(235,47,150,0.4) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      filter: blur(60px);
+    }
+    .scheme-c .hero::after {
+      content: "";
+      position: absolute;
+      top: 20%;
+      right: 10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0,229,255,0.2) 0%, transparent 70%);
+      filter: blur(40px);
+    }
+    .scheme-c .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(235,47,150,0.15);
+      border: 1px solid rgba(235,47,150,0.3);
+      color: var(--primary);
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .scheme-c .hero h1 {
+      font-size: 52px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.02em;
+    }
+    .scheme-c .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, #eb2f96, #ff6b35);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .scheme-c .hero-sub {
+      font-size: 16px;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .scheme-c .reward-visual {
+      max-width: 420px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .scheme-c .reward-box {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 40px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .scheme-c .reward-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #eb2f96, #ff6b35, #00e5ff);
+    }
+    .scheme-c .reward-amount {
+      font-size: 72px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #eb2f96, #ff6b35);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .scheme-c .reward-amount small {
+      font-size: 32px;
+      font-weight: 700;
+    }
+    .scheme-c .reward-label {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+    .scheme-c .reward-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .scheme-c .reward-meta-item {
+      text-align: center;
+    }
+    .scheme-c .reward-meta-item .num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--text);
+    }
+    .scheme-c .reward-meta-item .label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .scheme-c .rules {
+      max-width: 480px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+    .scheme-c .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .scheme-c .rule-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: rgba(235,47,150,0.1);
+      border: 1px solid rgba(235,47,150,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .scheme-c .rule-text h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .scheme-c .rule-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .scheme-c .cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px 24px;
+      background: linear-gradient(to top, var(--bg) 50%, transparent);
+      z-index: 100;
+    }
+    .scheme-c .cta-btn {
+      display: block;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 18px 32px;
+      background: linear-gradient(135deg, #eb2f96, #ff6b35);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(235,47,150,0.3);
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .scheme-c .cta-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    .scheme-c .cta-btn:hover::before {
+      left: 100%;
+    }
+    .scheme-c .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(235,47,150,0.4);
+    }
+
+    /* 底部留白，避免被固定CTA遮挡 */
+    .bottom-spacer { height: 100px; }
+  </style>
+</head>
+<body>
+
+  <!-- 方案切换器 -->
+  <div class="scheme-tabs">
+    <button class="scheme-tab active" onclick="switchScheme('a')">方案 A - 活力红包版</button>
+    <button class="scheme-tab" onclick="switchScheme('b')">方案 B - 极简聚焦版</button>
+    <button class="scheme-tab" onclick="switchScheme('c')">方案 C - 沉浸氛围版</button>
+  </div>
+
+  <script>
+    function switchScheme(id) {
+      document.querySelectorAll('.scheme-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.scheme-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('scheme-' + id).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+
+  <!-- ============================================
+       方案 A - 活力红包版
+       ============================================ -->
+  <div id="scheme-a" class="scheme-panel scheme-a active">
+    <div class="hero">
+      <div class="hero-badge"><span class="dot"></span>限时活动进行中</div>
+      <h1>带话题发帖<br><span>必得现金红包</span></h1>
+      <p class="hero-sub">活动期间带指定话题发布帖子，人人有奖</p>
+    </div>
+
+    <div class="reward-card">
+      <div class="reward-icon">¥</div>
+      <div class="reward-amount"><small>¥</small>1</div>
+      <div class="reward-label">发帖 3 篇即可领取</div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-title">活动玩法</div>
+      <div class="progress-steps">
+        <div class="step done">1</div>
+        <div class="step-arrow">→</div>
+        <div class="step">2</div>
+        <div class="step-arrow">→</div>
+        <div class="step">3</div>
+        <div class="step-arrow">→</div>
+        <div class="step" style="background:linear-gradient(135deg,#eb2f96,#ff6b35);border:none;color:#fff;">¥</div>
+      </div>
+      <div class="step-labels">
+        <span>带话题发帖</span>
+        <span></span>
+        <span>再发一篇</span>
+        <span></span>
+        <span>完成3篇</span>
+        <span></span>
+        <span>得1元红包</span>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="rule-item">
+        <div class="rule-num">1</div>
+        <div class="rule-text">
+          <h4>选择活动话题</h4>
+          <p>从活动指定的话题列表中选择一个，确保帖子带有话题标签</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">2</div>
+        <div class="rule-text">
+          <h4>发布有效帖子</h4>
+          <p>内容需原创且符合社区规范，字数不少于 15 字，配图至少 1 张</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">3</div>
+        <div class="rule-text">
+          <h4>累计完成 3 篇</h4>
+          <p>活动期间累计发布 3 篇符合要求的帖子，即可自动获得 1 元红包</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">4</div>
+        <div class="rule-text">
+          <h4>红包到账</h4>
+          <p>奖励将实时发放至账户余额，可直接提现或消费</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+
+    <div class="cta">
+      <button class="cta-btn">立即参与，发帖领红包</button>
+      <p class="cta-note">活动截止时间：2026年5月31日</p>
+    </div>
+  </div>
+
+  <!-- ============================================
+       方案 B - 极简聚焦版
+       ============================================ -->
+  <div id="scheme-b" class="scheme-panel scheme-b">
+    <div class="hero">
+      <div class="hero-label">限时活动</div>
+      <h1>发帖 3 篇<br>必得 1 元</h1>
+      <p class="hero-sub">带指定话题发布帖子，人人有奖，不设上限</p>
+    </div>
+
+    <div class="core-card">
+      <div class="core-equation">
+        <div>
+          <div class="core-num">3</div>
+          <div class="core-unit">篇帖子</div>
+        </div>
+        <div class="core-eq">=</div>
+        <div class="core-result">
+          <div class="core-num">1<small>元</small></div>
+          <div class="core-unit">现金红包</div>
+        </div>
+      </div>
+      <p class="core-note">带话题发布，内容原创，单篇不少于 15 字<br>活动期间累计完成 3 篇即自动到账</p>
+    </div>
+
+    <div class="rules">
+      <div class="rule-item">
+        <div class="rule-num">01</div>
+        <div class="rule-text">
+          <h4>选择话题</h4>
+          <p>从活动话题列表中选择一个标签，确保帖子带有该话题</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">02</div>
+        <div class="rule-text">
+          <h4>发布内容</h4>
+          <p>原创内容，不少于 15 字，至少 1 张配图，符合社区规范</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">03</div>
+        <div class="rule-text">
+          <h4>领取奖励</h4>
+          <p>累计完成 3 篇后，1 元红包自动发放至账户余额</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+
+    <div class="cta">
+      <button class="cta-btn">去发帖，领红包</button>
+    </div>
+  </div>
+
+  <!-- ============================================
+       方案 C - 沉浸氛围版
+       ============================================ -->
+  <div id="scheme-c" class="scheme-panel scheme-c">
+    <div class="hero">
+      <div class="hero-badge">限时活动</div>
+      <h1>带话题发帖<br><em>必得 1 元</em></h1>
+      <p class="hero-sub">发布 3 篇带话题帖子，现金红包实时到账</p>
+    </div>
+
+    <div class="reward-visual">
+      <div class="reward-box">
+        <div class="reward-amount"><small>¥</small>1</div>
+        <div class="reward-label">发帖 3 篇即可领取</div>
+        <div class="reward-meta">
+          <div class="reward-meta-item">
+            <div class="num">3</div>
+            <div class="label">目标篇数</div>
+          </div>
+          <div class="reward-meta-item">
+            <div class="num">100%</div>
+            <div class="label">必得概率</div>
+          </div>
+          <div class="reward-meta-item">
+            <div class="num">实时</div>
+            <div class="label">到账速度</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="rule-item">
+        <div class="rule-icon">#</div>
+        <div class="rule-text">
+          <h4>带话题发帖</h4>
+          <p>选择活动指定话题发布帖子</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-icon">✓</div>
+        <div class="rule-text">
+          <h4>内容有效</h4>
+          <p>原创、≥15字、≥1张图、符合规范</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-icon">3</div>
+        <div class="rule-text">
+          <h4>累计 3 篇</h4>
+          <p>活动期间累计完成即自动到账</p>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-icon">¥</div>
+        <div class="rule-text">
+          <h4>红包到手</h4>
+          <p>1 元现金红包，实时发放可提现</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+
+    <div class="cta">
+      <button class="cta-btn">立即参与活动</button>
+    </div>
+  </div>
+
+</body>
+</html>

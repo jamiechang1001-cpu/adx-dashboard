@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>社区运营管理系统 - 新建徽章</title>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <style>
+    @font-face {
+      font-family: 'CustomFont';
+      src: local('PingFang SC'), local('Hiragino Sans GB'), local('Microsoft YaHei'), local('Helvetica Neue'), local('Arial'), sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'CustomFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F0F2F5;
+      margin: 0;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // --- Icon Components ---
+    const IconMenuFold = () => (
+      <svg width="16" height="16" viewBox="0 0 1024 1024" fill="currentColor">
+        <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zM400 642h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H400c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8z"/>
+        <path d="M170 544h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zM170 744h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zM170 344h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8z"/>
+      </svg>
+    );
+
+    const IconCalendar = () => (
+      <svg width="16" height="16" viewBox="0 0 1024 1024" fill="#999">
+        <path d="M880 184H712v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H384v-64c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v64H144c-17.7 0-32 14.3-32 32v664c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V216c0-17.7-14.3-32-32-32zM648.3 521.8l-43.2 43.2-84.4-84.4-44.8 44.8 129.2 129.2 88-88c15.6-15.6 15.6-41 0-56.6-15.6-15.6-41-15.6-56.6 0z"/>
+      </svg>
+    );
+
+    const IconQuestion = () => (
+      <svg width="14" height="14" viewBox="0 0 1024 1024" fill="#C0C4CC">
+        <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/>
+        <path d="M512 336c-44.1 0-80 35.9-80 80 0 32.8 19.7 61 48 73.5V752c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V489.5c28.3-12.5 48-40.7 48-73.5 0-44.1-35.9-80-80-80z"/>
+      </svg>
+    );
+
+    const IconDown = () => (
+      <svg width="10" height="10" viewBox="0 0 1024 1024" fill="#999">
+        <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"/>
+      </svg>
+    );
+
+    const IconRight = () => (
+      <svg width="10" height="10" viewBox="0 0 1024 1024" fill="#999">
+        <path d="M765.7 486.8L314.9 134.7c-5.3-4.1-12.9-.4-12.9 6.3v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V835c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1c16.4-12.8 16.4-37.6 0-50.4z"/>
+      </svg>
+    );
+
+    const IconArrowRight = () => (
+      <svg width="12" height="12" viewBox="0 0 1024 1024" fill="#999">
+        <path d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-8.2 0-10 5.8-10 10v66c0 4.4 2.8 8 6.2 10.5l311.5 254.6-311.5 254.6c-3.4 2.5-6.2 6.1-6.2 10.5v66c0 4.2 1.8 10 10 10h88.5c3.9 0 7.6-1.4 10.5-3.9L869 536.2c14.7-12.7 14.7-35.7 0-48.4z"/>
+      </svg>
+    );
+
+    const IconUp = () => (
+      <svg width="10" height="10" viewBox="0 0 1024 1024" fill="#E84C85">
+        <path d="M890.5 669.9L537.8 183.7c-12.8-17.6-39-17.6-51.7 0L133.5 669.9c-3.9 5.3-.1 12.7 6.4 12.7h75c5.1 0 9.9-2.5 12.9-6.6L512 280.5l293.6 395.4c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"/>
+      </svg>
+    );
+
+    // --- Sidebar Component ---
+    const Sidebar = () => {
+      const sidebarWrap = {
+        width: '220px',
+        minWidth: '220px',
+        background: '#fff',
+        borderRight: '1px solid #E8E8E8',
+        height: '100vh',
+        overflowY: 'auto',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        zIndex: 100,
+      };
+
+      const logoWrap = {
+        height: '56px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 20px',
+        borderBottom: '1px solid #F0F0F0',
+      };
+
+      const logoIcon = {
+        width: '32px',
+        height: '32px',
+        background: 'linear-gradient(135deg, #FF6B9D, #E84C85)',
+        borderRadius: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: '10px',
+        color: '#fff',
+        fontSize: '16px',
+        fontWeight: 'bold',
+      };
+
+      const logoText = {
+        fontSize: '16px',
+        fontWeight: 600,
+        color: '#E84C85',
+      };
+
+      const menuGroup = {
+        marginTop: '8px',
+      };
+
+      const menuItem = {
+        height: '44px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 16px 0 20px',
+        cursor: 'pointer',
+        color: '#595959',
+        fontSize: '14px',
+        transition: 'all 0.2s',
+      };
+
+      const menuItemActive = {
+        ...menuItem,
+        color: '#E84C85',
+        background: '#FFF0F3',
+        borderRight: '3px solid #E84C85',
+      };
+
+      const submenuItem = {
+        height: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 16px 0 48px',
+        cursor: 'pointer',
+        color: '#8C8C8C',
+        fontSize: '13px',
+        transition: 'all 0.2s',
+      };
+
+      const submenuItemActive = {
+        ...submenuItem,
+        color: '#E84C85',
+        background: '#FFF0F3',
+        borderRight: '3px solid #E84C85',
+      };
+
+      const iconWrap = {
+        marginRight: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        fontSize: '14px',
+      };
+
+      const arrowWrap = {
+        marginLeft: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+      };
+
+      const sectionTitle = {
+        fontSize: '12px',
+        color: '#BFBFBF',
+        padding: '16px 20px 8px',
+        fontWeight: 500,
+      };
+
+      return (
+        <div style={sidebarWrap}>
+          <div style={logoWrap}>
+            <div style={logoIcon}>社</div>
+            <span style={logoText}>社区运营管理系统</span>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>数据分析</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={sectionTitle}>内容供给消费观测</div>
+            <div style={submenuItem}>帖子/资讯(天级增量)T...</div>
+            <div style={submenuItem}>帖子/资讯(历史累计)数...</div>
+            <div style={submenuItem}>帖子/资讯(天级增量)数...</div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>⚙</span>
+              <span>运营工具</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>活动管理</span>
+              <span style={arrowWrap}><IconUp /></span>
+            </div>
+            <div style={submenuItem}>她她圈活动 tab活动配置</div>
+            <div style={submenuItem}>活动列表</div>
+            <div style={submenuItem}>挂件管理</div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>质检管理</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>内容管理</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>任务中心后台</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>内容分发</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={{...menuItem, color: '#E84C85'}}>
+              <span style={iconWrap}>☰</span>
+              <span>用户激励管理</span>
+              <span style={arrowWrap}><IconUp /></span>
+            </div>
+            <div style={submenuItem}>流量券管理</div>
+            <div style={submenuItemActive}>徽章管理</div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>达人认证管理</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+
+          <div style={menuGroup}>
+            <div style={menuItem}>
+              <span style={iconWrap}>☰</span>
+              <span>配置管理</span>
+              <span style={arrowWrap}><IconDown /></span>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // --- Header Component ---
+    const Header = () => {
+      const headerWrap = {
+        height: '48px',
+        background: '#fff',
+        borderBottom: '1px solid #E8E8E8',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 24px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+      };
+
+      const breadcrumbWrap = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        fontSize: '14px',
+        color: '#595959',
+      };
+
+      const breadcrumbItem = {
+        cursor: 'pointer',
+      };
+
+      const breadcrumbActive = {
+        color: '#262626',
+        fontWeight: 500,
+      };
+
+      const separator = {
+        color: '#BFBFBF',
+        margin: '0 4px',
+      };
+
+      const userWrap = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        cursor: 'pointer',
+      };
+
+      const avatar = {
+        width: '28px',
+        height: '28px',
+        borderRadius: '50%',
+        background: 'linear-gradient(135deg, #FFD666, #FAAD14)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '12px',
+        color: '#fff',
+      };
+
+      return (
+        <div style={headerWrap}>
+          <div style={breadcrumbWrap}>
+            <span style={breadcrumbItem}>徽章管理</span>
+            <span style={separator}>/</span>
+            <span style={breadcrumbItem}>徽章列表</span>
+            <span style={separator}>/</span>
+            <span style={{...breadcrumbItem, ...breadcrumbActive}}>新建徽章</span>
+          </div>
+          <div style={userWrap}>
+            <div style={avatar}>张</div>
+            <span style={{fontSize: '14px', color: '#595959'}}>张家敏</span>
+            <IconDown />
+          </div>
+        </div>
+      );
+    };
+
+    // --- Form Components ---
+    const RequiredMark = () => <span style={{color: '#FF4D4F', marginRight: '4px'}}>*</span>;
+
+    const Label = ({ children, help }) => (
+      <label style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        width: '120px',
+        textAlign: 'right',
+        paddingRight: '12px',
+        fontSize: '14px',
+        color: '#595959',
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+      }}>
+        {children}
+        {help && <span style={{marginLeft: '4px', display: 'inline-flex'}}><IconQuestion /></span>}
+      </label>
+    );
+
+    const Input = ({ placeholder, style, ...props }) => (
+      <input
+        style={{
+          height: '36px',
+          padding: '0 12px',
+          border: '1px solid #D9D9D9',
+          borderRadius: '4px',
+          fontSize: '14px',
+          color: '#262626',
+          outline: 'none',
+          transition: 'border-color 0.2s',
+          width: '100%',
+          ...style,
+        }}
+        placeholder={placeholder}
+        onFocus={(e) => e.target.style.borderColor = '#E84C85'}
+        onBlur={(e) => e.target.style.borderColor = '#D9D9D9'}
+        {...props}
+      />
+    );
+
+    const Select = ({ placeholder, style, ...props }) => (
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        ...style,
+      }}>
+        <select
+          style={{
+            height: '36px',
+            padding: '0 32px 0 12px',
+            border: '1px solid #D9D9D9',
+            borderRadius: '4px',
+            fontSize: '14px',
+            color: '#BFBFBF',
+            outline: 'none',
+            width: '100%',
+            appearance: 'none',
+            background: '#fff',
+            cursor: 'pointer',
+          }}
+          defaultValue=""
+          {...props}
+        >
+          <option value="" disabled>{placeholder}</option>
+        </select>
+        <span style={{
+          position: 'absolute',
+          right: '12px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          pointerEvents: 'none',
+        }}><IconDown /></span>
+      </div>
+    );
+
+    const FormItem = ({ label, help, children, style }) => (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '24px',
+        ...style,
+      }}>
+        <Label help={help}>
+          <RequiredMark />{label}
+        </Label>
+        <div style={{flex: 1, maxWidth: '560px'}}>{children}</div>
+      </div>
+    );
+
+    const SectionTitle = ({ children }) => (
+      <div style={{
+        fontSize: '15px',
+        fontWeight: 600,
+        color: '#262626',
+        marginBottom: '24px',
+        paddingBottom: '12px',
+        borderBottom: '1px solid #F0F0F0',
+      }}>
+        {children}
+      </div>
+    );
+
+    const Radio = ({ checked, label, children }) => (
+      <label style={{
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        gap: '6px',
+        fontSize: '14px',
+        color: '#595959',
+      }}>
+        <span style={{
+          width: '14px',
+          height: '14px',
+          borderRadius: '50%',
+          border: checked ? '4px solid #E84C85' : '1px solid #D9D9D9',
+          display: 'inline-block',
+          transition: 'all 0.2s',
+          flexShrink: 0,
+        }} />
+        <span>{label}</span>
+        {children}
+      </label>
+    );
+
+    // --- Main Form ---
+    const BadgeForm = () => {
+      const [wearType, setWearType] = useState('days');
+
+      const mainWrap = {
+        marginLeft: '220px',
+        minHeight: '100vh',
+        background: '#F0F2F5',
+        display: 'flex',
+        flexDirection: 'column',
+        width: 'calc(100% - 220px)',
+      };
+
+      const contentWrap = {
+        padding: '24px',
+        flex: 1,
+        width: '100%',
+      };
+
+      const cardWrap = {
+        background: '#fff',
+        borderRadius: '4px',
+        padding: '24px',
+        marginBottom: '24px',
+        width: '100%',
+      };
+
+      const dateRangeWrap = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+      };
+
+      const dateInputWrap = {
+        position: 'relative',
+        flex: 1,
+      };
+
+      const dateInput = {
+        width: '100%',
+        height: '36px',
+        padding: '0 32px 0 12px',
+        border: '1px solid #D9D9D9',
+        borderRadius: '4px',
+        fontSize: '14px',
+        color: '#BFBFBF',
+        outline: 'none',
+        background: '#fff',
+      };
+
+      const dateIcon = {
+        position: 'absolute',
+        right: '10px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        pointerEvents: 'none',
+      };
+
+      const radioGroupWrap = {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+      };
+
+      const radioRow = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+      };
+
+      const smallInput = {
+        width: '120px',
+        height: '32px',
+        padding: '0 8px',
+        border: '1px solid #D9D9D9',
+        borderRadius: '4px',
+        fontSize: '14px',
+        outline: 'none',
+      };
+
+      const selectSmall = {
+        width: '140px',
+        position: 'relative',
+      };
+
+      const footerWrap = {
+        position: 'fixed',
+        bottom: 0,
+        left: '220px',
+        right: 0,
+        height: '64px',
+        background: '#fff',
+        borderTop: '1px solid #E8E8E8',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: '0 24px',
+        gap: '12px',
+        zIndex: 50,
+      };
+
+      const btnPrimary = {
+        height: '36px',
+        padding: '0 24px',
+        background: '#E84C85',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        fontSize: '14px',
+        cursor: 'pointer',
+        transition: 'opacity 0.2s',
+      };
+
+      const btnDefault = {
+        height: '36px',
+        padding: '0 24px',
+        background: '#fff',
+        color: '#595959',
+        border: '1px solid #D9D9D9',
+        borderRadius: '4px',
+        fontSize: '14px',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+      };
+
+      return (
+        <div style={mainWrap}>
+          <Header />
+          <div style={contentWrap}>
+            <div style={cardWrap}>
+              <SectionTitle>基础信息</SectionTitle>
+
+              <FormItem label="名称">
+                <Input placeholder="最多5个字" />
+              </FormItem>
+
+              <FormItem label="类型">
+                <Select placeholder="" />
+              </FormItem>
+
+              <FormItem label="分类" help>
+                <Select placeholder="" />
+              </FormItem>
+
+              <FormItem label="可获得时间">
+                <div style={dateRangeWrap}>
+                  <div style={dateInputWrap}>
+                    <input style={dateInput} placeholder="开始日期" readOnly />
+                    <span style={dateIcon}><IconCalendar /></span>
+                  </div>
+                  <IconArrowRight />
+                  <div style={dateInputWrap}>
+                    <input style={dateInput} placeholder="结束日期" readOnly />
+                    <span style={dateIcon}><IconCalendar /></span>
+                  </div>
+                </div>
+              </FormItem>
+
+              <FormItem label="发放等待周期" help>
+                <div style={dateRangeWrap}>
+                  <Input style={{flex: 1}} />
+                  <div style={{width: '140px', position: 'relative'}}>
+                    <select style={{
+                      width: '100%',
+                      height: '36px',
+                      padding: '0 32px 0 12px',
+                      border: '1px solid #D9D9D9',
+                      borderRadius: '4px',
+                      fontSize: '14px',
+                      color: '#BFBFBF',
+                      outline: 'none',
+                      appearance: 'none',
+                      background: '#fff',
+                      cursor: 'pointer',
+                    }} defaultValue="">
+                      <option value="" disabled></option>
+                    </select>
+                    <span style={{position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none'}}><IconDown /></span>
+                  </div>
+                </div>
+              </FormItem>
+
+              <FormItem label="可佩带时间" help style={{alignItems: 'flex-start'}}>
+                <div style={radioGroupWrap}>
+                  <Radio checked={wearType === 'forever'} label="永久" />
+                  <div style={radioRow}>
+                    <Radio checked={wearType === 'deadline'} label="截止时间" />
+                    <div style={{width: '140px', position: 'relative'}}>
+                      <select style={{
+                        width: '100%',
+                        height: '32px',
+                        padding: '0 32px 0 12px',
+                        border: '1px solid #D9D9D9',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        color: '#BFBFBF',
+                        outline: 'none',
+                        appearance: 'none',
+                        background: '#fff',
+                        cursor: 'pointer',
+                      }} defaultValue="">
+                        <option value="" disabled></option>
+                      </select>
+                      <span style={{position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none'}}><IconDown /></span>
+                    </div>
+                  </div>
+                  <div style={radioRow}>
+                    <Radio checked={wearType === 'days'} label="可用天数" />
+                    <span style={{fontSize: '14px', color: '#595959'}}>获得后</span>
+                    <input style={smallInput} />
+                    <span style={{fontSize: '14px', color: '#595959'}}>天内有效</span>
+                  </div>
+                  <div style={radioRow}>
+                    <Radio checked={wearType === 'natural'} label="自然周期" />
+                    <div style={{width: '140px', position: 'relative'}}>
+                      <select style={{
+                        width: '100%',
+                        height: '32px',
+                        padding: '0 32px 0 12px',
+                        border: '1px solid #D9D9D9',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        color: '#BFBFBF',
+                        outline: 'none',
+                        appearance: 'none',
+                        background: '#fff',
+                        cursor: 'pointer',
+                      }} defaultValue="">
+                        <option value="" disabled></option>
+                      </select>
+                      <span style={{position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none'}}><IconDown /></span>
+                    </div>
+                  </div>
+                </div>
+              </FormItem>
+            </div>
+
+            <div style={cardWrap}>
+              <SectionTitle>展示排序</SectionTitle>
+              <FormItem label="优先级" help>
+                <Input placeholder="数值越大排序越靠前" />
+              </FormItem>
+            </div>
+
+            <div style={{height: '64px'}} />
+          </div>
+
+          <div style={footerWrap}>
+            <button style={btnPrimary}>保存</button>
+            <button style={btnDefault}>取消</button>
+          </div>
+        </div>
+      );
+    };
+
+    // --- App ---
+    const App = () => (
+      <div style={{display: 'flex'}}>
+        <Sidebar />
+        <BadgeForm />
+      </div>
+    );
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
