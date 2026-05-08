@@ -2505,12 +2505,34 @@ const Waterfall: React.FC = () => {
               <div style={{ position: 'absolute', left: 48, right: 16, top: 0, bottom: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 {[0,1,2,3,4,5,6].map(i => <div key={i} style={{ borderTop: '1px dashed #eee', height: 0 }} />)}
               </div>
-              {/* 数据点 */}
+              {/* 折线图 */}
               <div style={{ position: 'absolute', left: 48, right: 16, top: 0, bottom: 24 }}>
-                <div style={{ position: 'absolute', left: '50%', top: '15%', width: 8, height: 8, borderRadius: '50%', background: '#1890ff', transform: 'translateX(-50%)' }} />
-                <div style={{ position: 'absolute', left: '50%', top: '85%', width: 8, height: 8, borderRadius: '50%', background: '#52c41a', transform: 'translateX(-50%)' }} />
-                <div style={{ position: 'absolute', left: '50%', bottom: 0, textAlign: 'center', transform: 'translateX(-50%)', fontSize: 12, color: '#999' }}>
-                  {new Date().toISOString().slice(0, 10)}
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                  <polyline fill="none" stroke="#1890ff" strokeWidth={0.8} points="0,33 17,17 33,28 50,11 67,22 83,6 100,17" />
+                  <polyline fill="none" stroke="#52c41a" strokeWidth={0.8} points="0,56 17,44 33,50 50,39 67,47 83,33 100,42" />
+                  <circle cx="0" cy="33" r={1.5} fill="#1890ff" />
+                  <circle cx="17" cy="17" r={1.5} fill="#1890ff" />
+                  <circle cx="33" cy="28" r={1.5} fill="#1890ff" />
+                  <circle cx="50" cy="11" r={1.5} fill="#1890ff" />
+                  <circle cx="67" cy="22" r={1.5} fill="#1890ff" />
+                  <circle cx="83" cy="6" r={1.5} fill="#1890ff" />
+                  <circle cx="100" cy="17" r={1.5} fill="#1890ff" />
+                  <circle cx="0" cy="56" r={1.5} fill="#52c41a" />
+                  <circle cx="17" cy="44" r={1.5} fill="#52c41a" />
+                  <circle cx="33" cy="50" r={1.5} fill="#52c41a" />
+                  <circle cx="50" cy="39" r={1.5} fill="#52c41a" />
+                  <circle cx="67" cy="47" r={1.5} fill="#52c41a" />
+                  <circle cx="83" cy="33" r={1.5} fill="#52c41a" />
+                  <circle cx="100" cy="42" r={1.5} fill="#52c41a" />
+                </svg>
+                <div style={{ position: 'absolute', bottom: -20, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#999' }}>
+                  <span>05-01</span>
+                  <span>05-02</span>
+                  <span>05-03</span>
+                  <span>05-04</span>
+                  <span>05-05</span>
+                  <span>05-06</span>
+                  <span>05-07</span>
                 </div>
               </div>
             </div>
