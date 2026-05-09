@@ -7,6 +7,7 @@ import {
   Space,
   Row,
   Col,
+  Button,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -354,6 +355,34 @@ export default function DataReport() {
       </Card>
 
       {/* 数据表格 */}
+      <div style={{ marginBottom: 8, textAlign: 'right' }}>
+        <Button
+          size="small"
+          onClick={() => {
+            const headers = columns.map((col) => col.title).join(',');
+            const rows = displayData.map((row) =>
+              columns
+                .map((col) => {
+                  const val = row[(col as any).dataIndex as keyof TableRow];
+                  const str = val === undefined || val === null ? '' : String(val);
+                  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                  }
+                  return str;
+                })
+                .join(',')
+            );
+            const csv = '\ufeff' + [headers, ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `综合报表_${dateRange[0].format('YYYYMMDD')}_${dateRange[1].format('YYYYMMDD')}.csv`;
+            link.click();
+          }}
+        >
+          导出
+        </Button>
+      </div>
       <Table
         size="small"
         bordered

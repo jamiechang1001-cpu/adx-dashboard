@@ -7,6 +7,7 @@ import {
   Tag,
   Card,
   Space,
+  Button,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -217,7 +218,39 @@ function RunningReport() {
       </div>
 
       {/* 数据表格 */}
-      <Card title="A/B测试数据对比" size="small" style={{ marginBottom: 16 }}>
+      <Card
+        title="A/B测试数据对比"
+        size="small"
+        style={{ marginBottom: 16 }}
+        extra={
+          <Button
+            size="small"
+            onClick={() => {
+              const headers = columns.map((col) => col.title).join(',');
+              const rows = tableDataWithSummary.map((row) =>
+                columns
+                  .map((col) => {
+                    const val = row[(col as any).dataIndex as keyof DataRow];
+                    const str = val === undefined || val === null ? '' : String(val);
+                    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                      return `"${str.replace(/"/g, '""')}"`;
+                    }
+                    return str;
+                  })
+                  .join(',')
+              );
+              const csv = '\ufeff' + [headers, ...rows].join('\n');
+              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+              const link = document.createElement('a');
+              link.href = URL.createObjectURL(blob);
+              link.download = `A_B测试报表_${dayjs().format('YYYYMMDD')}.csv`;
+              link.click();
+            }}
+          >
+            导出
+          </Button>
+        }
+      >
         <Table
           size="small"
           bordered
@@ -338,7 +371,50 @@ function RunningReport() {
       </Card>
 
       {/* 数据明细 */}
-      <Card title={`数据明细 - ${metricOptions.find((o) => o.value === chartMetric)?.label || '千人均收益'}`} size="small" style={{ marginBottom: 16 }}>
+      <Card
+        title={`数据明细 - ${metricOptions.find((o) => o.value === chartMetric)?.label || '千人均收益'}`}
+        size="small"
+        style={{ marginBottom: 16 }}
+        extra={
+          <Button
+            size="small"
+            onClick={() => {
+              const detailColumns = [
+                { title: '日期', dataIndex: 'date' },
+                { title: 'A对照组', dataIndex: 'valueA' },
+                { title: 'B测试组', dataIndex: 'valueB' },
+                { title: '对比涨幅', dataIndex: 'change' },
+              ];
+              const detailData = chartLabels.map((date, i) => ({
+                date,
+                valueA: chartDataA[i].toFixed(2),
+                valueB: chartDataB[i].toFixed(2),
+                change: calcChange(chartDataA[i], chartDataB[i]),
+              }));
+              const headers = detailColumns.map((col) => col.title).join(',');
+              const rows = detailData.map((row) =>
+                detailColumns
+                  .map((col) => {
+                    const str = String(row[col.dataIndex as keyof typeof row]);
+                    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                      return `"${str.replace(/"/g, '""')}"`;
+                    }
+                    return str;
+                  })
+                  .join(',')
+              );
+              const csv = '\ufeff' + [headers, ...rows].join('\n');
+              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+              const link = document.createElement('a');
+              link.href = URL.createObjectURL(blob);
+              link.download = `A_B测试数据明细_${dayjs().format('YYYYMMDD')}.csv`;
+              link.click();
+            }}
+          >
+            导出
+          </Button>
+        }
+      >
         <Table
           size="small"
           bordered
