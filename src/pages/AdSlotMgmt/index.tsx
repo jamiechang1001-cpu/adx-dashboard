@@ -12,7 +12,6 @@ import {
   Input,
   Select,
   Radio,
-  InputNumber,
   Switch,
 } from 'antd';
 import {
@@ -82,11 +81,9 @@ const AdSlotMgmt: React.FC = () => {
   const [dataSource, setDataSource] = useState<AdSlot[]>(mockData);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [addForm] = Form.useForm();
-  const [pricingMode, setPricingMode] = useState<'bid' | 'fixed'>('bid');
 
   const handleAddSlot = () => {
     addForm.resetFields();
-    setPricingMode('bid');
     setAddModalVisible(true);
   };
 
@@ -315,30 +312,11 @@ const AdSlotMgmt: React.FC = () => {
             initialValue="bid"
             rules={[{ required: true, message: '请选择价格模式' }]}
           >
-            <Radio.Group
-              onChange={(e) => setPricingMode(e.target.value)}
-            >
+            <Radio.Group>
               <Radio value="bid">竞价</Radio>
               <Radio value="fixed">定价</Radio>
             </Radio.Group>
           </Form.Item>
-
-          {pricingMode === 'fixed' && (
-            <Form.Item
-              label="价格"
-              name="price"
-              rules={[{ required: true, message: '请输入价格' }]}
-            >
-              <InputNumber
-                placeholder="请输入价格"
-                min={0}
-                step={0.01}
-                precision={2}
-                style={{ width: '100%' }}
-                addonAfter="元"
-              />
-            </Form.Item>
-          )}
 
           <Form.Item
             label="状态"

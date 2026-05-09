@@ -358,8 +358,6 @@ const Waterfall: React.FC = () => {
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([dayjs(), dayjs()]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [groupEnabledMap, setGroupEnabledMap] = useState<Record<string, boolean>>({});
-  const [floorPriceEnabledMap, setFloorPriceEnabledMap] = useState<Record<string, boolean>>({});
-  const [floorPriceMap, setFloorPriceMap] = useState<Record<string, number | null>>({});
   const [adSourceEnabledMap, setAdSourceEnabledMap] = useState<Record<string, boolean>>({});
   const [addGroupModalVisible, setAddGroupModalVisible] = useState(false);
   const [addGroupForm] = Form.useForm();
@@ -421,14 +419,6 @@ const Waterfall: React.FC = () => {
 
   function getGroupEnabled(group: WaterfallGroup): boolean {
     return groupEnabledMap[group.id] !== undefined ? groupEnabledMap[group.id] : group.enabled;
-  }
-
-  function getFloorPriceEnabled(group: WaterfallGroup): boolean {
-    return floorPriceEnabledMap[group.id] !== undefined ? floorPriceEnabledMap[group.id] : group.floorPriceEnabled;
-  }
-
-  function getFloorPrice(group: WaterfallGroup): number | null {
-    return floorPriceMap[group.id] !== undefined ? floorPriceMap[group.id] : group.floorPrice;
   }
 
   function getAdSourceEnabled(source: AdSource): boolean {
@@ -1053,9 +1043,6 @@ const Waterfall: React.FC = () => {
       key: 'price',
       width: 62,
       render: (_: any, record: AdSource) => {
-        if (record.pricingType === 'bid') {
-          return <span style={{ fontSize: 13, color: '#999' }}>-</span>;
-        }
         if (editingPriceId === record.id) {
           return (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -1391,7 +1378,7 @@ const Waterfall: React.FC = () => {
         {/* 分组规则 */}
         <GroupRules rules={activeGroup?.rules || []} />
 
-        {/* 分组开关 & 流量底价 */}
+        {/* 分组开关 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 48, marginTop: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ color: '#595959' }}>分组开关</span>
@@ -1404,32 +1391,6 @@ const Waterfall: React.FC = () => {
                 }
               }}
             />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: '#595959' }}>分组流量底价:</span>
-            <Switch
-              size="small"
-              checked={activeGroup ? getFloorPriceEnabled(activeGroup) : false}
-              onChange={(checked) => {
-                if (activeGroup) {
-                  setFloorPriceEnabledMap((prev) => ({ ...prev, [activeGroup.id]: checked }));
-                }
-              }}
-            />
-            <InputNumber
-              disabled={!activeGroup || !getFloorPriceEnabled(activeGroup)}
-              value={activeGroup ? getFloorPrice(activeGroup) : 0}
-              onChange={(val) => {
-                if (activeGroup) {
-                  setFloorPriceMap((prev) => ({ ...prev, [activeGroup.id]: val }));
-                }
-              }}
-              min={0}
-              precision={2}
-              style={{ width: 100 }}
-              placeholder="0"
-            />
-            <span style={{ color: '#999', fontSize: 12 }}>低于此底价的广告将不参与返回</span>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
             {activeGroup?.abTest ? (
@@ -1993,20 +1954,18 @@ const Waterfall: React.FC = () => {
             />
           </Form.Item>
 
-          {pricingMode === 'fixed' && (
-            <Form.Item
-              label="价格(元)"
-              name="price"
-              rules={[{ required: true, message: '请输入价格' }]}
-            >
-              <InputNumber
-                placeholder="请输入价格"
-                min={0}
-                precision={2}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          )}
+          <Form.Item
+            label="价格(元)"
+            name="price"
+            rules={[{ required: pricingMode === 'fixed', message: '请输入价格' }]}
+          >
+            <InputNumber
+              placeholder="请输入价格"
+              min={0}
+              precision={2}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
 
           <Form.Item label="状态" name="status" valuePropName="checked" initialValue={true}>
             <Switch />
