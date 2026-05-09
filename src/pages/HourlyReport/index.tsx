@@ -235,7 +235,7 @@ export default function HourlyReport() {
       >
         <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>{currentMetricLabel}</div>
 
-        <div style={{ display: 'flex', height: 240 }}>
+        <div style={{ display: 'flex', height: 280 }}>
           <div
             style={{
               width: 50,
@@ -259,6 +259,7 @@ export default function HourlyReport() {
               position: 'relative',
               borderLeft: '1px solid #e8e8e8',
               borderBottom: '1px solid #e8e8e8',
+              paddingBottom: 28,
             }}
           >
             <div
@@ -276,7 +277,7 @@ export default function HourlyReport() {
               <polyline
                 fill="none"
                 stroke="#1890ff"
-                strokeWidth={0.8}
+                strokeWidth={0.4}
                 points={chartValues
                   .map((v, i) => {
                     const x = (i / (chartValues.length - 1)) * 100;
@@ -288,14 +289,14 @@ export default function HourlyReport() {
               {chartValues.map((v, i) => {
                 const x = (i / (chartValues.length - 1)) * 100;
                 const y = 100 - ((v - minVal) / range) * 100;
-                return <circle key={i} cx={x} cy={y} r={1.5} fill="#1890ff" />;
+                return <circle key={i} cx={x} cy={y} r={1} fill="#1890ff" />;
               })}
             </svg>
 
             <div
               style={{
                 position: 'absolute',
-                bottom: -28,
+                bottom: 4,
                 left: 0,
                 right: 0,
                 display: 'flex',
@@ -331,7 +332,7 @@ export default function HourlyReport() {
               <polyline
                 fill="none"
                 stroke="#1890ff"
-                strokeWidth={1}
+                strokeWidth={0.5}
                 points={chartValues.map((v, i) => `${i},${100 - ((v - minVal) / range) * 100}`).join(' ')}
               />
             </svg>

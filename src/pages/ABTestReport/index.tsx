@@ -306,7 +306,7 @@ function RunningReport() {
         </div>
 
         {/* 模拟折线图 */}
-        <div style={{ display: 'flex', height: 280 }}>
+        <div style={{ display: 'flex', height: 310 }}>
           {/* Y轴 */}
           <div style={{ width: 50, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-end', paddingRight: 8, fontSize: 11, color: '#999' }}>
             <span>{maxVal.toFixed(1)}</span>
@@ -315,7 +315,7 @@ function RunningReport() {
           </div>
 
           {/* 图表区域 */}
-          <div style={{ flex: 1, position: 'relative', borderLeft: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8' }}>
+          <div style={{ flex: 1, position: 'relative', borderLeft: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8', paddingBottom: 28 }}>
             {/* 网格线 */}
             <div style={{ position: 'absolute', top: '0%', left: 0, right: 0, height: 1, background: '#f0f0f0' }} />
             <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, background: '#f0f0f0' }} />
@@ -326,7 +326,7 @@ function RunningReport() {
               <polyline
                 fill="none"
                 stroke="#1890ff"
-                strokeWidth={0.8}
+                strokeWidth={0.4}
                 points={chartDataA.map((v, i) => {
                   const x = (i / (days - 1)) * 100;
                   const y = 100 - ((v - minVal) / range) * 100;
@@ -337,14 +337,14 @@ function RunningReport() {
                 const x = (i / (days - 1)) * 100;
                 const y = 100 - ((v - minVal) / range) * 100;
                 return (
-                  <circle key={`a-${i}`} cx={x} cy={y} r={1.2} fill="#1890ff" />
+                  <circle key={`a-${i}`} cx={x} cy={y} r={0.8} fill="#1890ff" />
                 );
               })}
               {/* B组折线 */}
               <polyline
                 fill="none"
                 stroke="#fa8c16"
-                strokeWidth={0.8}
+                strokeWidth={0.4}
                 points={chartDataB.map((v, i) => {
                   const x = (i / (days - 1)) * 100;
                   const y = 100 - ((v - minVal) / range) * 100;
@@ -355,13 +355,13 @@ function RunningReport() {
                 const x = (i / (days - 1)) * 100;
                 const y = 100 - ((v - minVal) / range) * 100;
                 return (
-                  <circle key={`b-${i}`} cx={x} cy={y} r={1.2} fill="#fa8c16" />
+                  <circle key={`b-${i}`} cx={x} cy={y} r={0.8} fill="#fa8c16" />
                 );
               })}
             </svg>
 
             {/* X轴标签 */}
-            <div style={{ position: 'absolute', bottom: -24, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#999' }}>
+            <div style={{ position: 'absolute', bottom: 4, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#999' }}>
               {chartLabels.map((label) => (
                 <span key={label}>{label}</span>
               ))}

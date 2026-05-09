@@ -243,7 +243,7 @@ export default function DataReport() {
         {/* Y轴标签 */}
         <div style={{ fontSize: 11, color: '#999', marginBottom: 4 }}>{currentMetricLabel}</div>
 
-        <div style={{ display: 'flex', height: 240 }}>
+        <div style={{ display: 'flex', height: 280 }}>
           {/* Y轴刻度 */}
           <div
             style={{
@@ -269,6 +269,7 @@ export default function DataReport() {
               position: 'relative',
               borderLeft: '1px solid #e8e8e8',
               borderBottom: '1px solid #e8e8e8',
+              paddingBottom: 28,
             }}
           >
             {/* 网格线 */}
@@ -288,7 +289,7 @@ export default function DataReport() {
               <polyline
                 fill="none"
                 stroke="#1890ff"
-                strokeWidth={0.8}
+                strokeWidth={0.4}
                 points={chartValues
                   .map((v, i) => {
                     const x = (i / (chartValues.length - 1)) * 100;
@@ -300,7 +301,7 @@ export default function DataReport() {
               {chartValues.map((v, i) => {
                 const x = (i / (chartValues.length - 1)) * 100;
                 const y = 100 - ((v - minVal) / range) * 100;
-                return <circle key={i} cx={x} cy={y} r={1.5} fill="#1890ff" />;
+                return <circle key={i} cx={x} cy={y} r={1} fill="#1890ff" />;
               })}
             </svg>
 
@@ -308,7 +309,7 @@ export default function DataReport() {
             <div
               style={{
                 position: 'absolute',
-                bottom: -28,
+                bottom: 4,
                 left: 0,
                 right: 0,
                 display: 'flex',
@@ -346,7 +347,7 @@ export default function DataReport() {
               <polyline
                 fill="none"
                 stroke="#1890ff"
-                strokeWidth={1}
+                strokeWidth={0.5}
                 points={chartValues.map((v, i) => `${i},${100 - ((v - minVal) / range) * 100}`).join(' ')}
               />
             </svg>
