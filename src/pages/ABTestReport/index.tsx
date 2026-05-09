@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Tabs,
   Table,
@@ -96,6 +96,23 @@ function calcChange(a: number | string, b: number | string): string {
 function RunningReport() {
   const [chartMetric, setChartMetric] = useState('revenuePerMille');
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([dayjs().subtract(7, 'day'), dayjs()]);
+  const [selectedGroup, setSelectedGroup] = useState<string>('默认分组');
+
+  const groupOptions = useMemo(() => {
+    try {
+      const saved = localStorage.getItem('waterfall_scenes');
+      if (!saved) return [{ label: '默认分组', value: '默认分组' }];
+      const scenes = JSON.parse(saved) as { groups?: { name: string }[] }[];
+      const names = new Set<string>();
+      scenes.forEach((scene) => {
+        scene.groups?.forEach((g) => names.add(g.name));
+      });
+      const options = Array.from(names).map((name) => ({ label: name, value: name }));
+      return options.length > 0 ? options : [{ label: '默认分组', value: '默认分组' }];
+    } catch {
+      return [{ label: '默认分组', value: '默认分组' }];
+    }
+  }, []);
 
   const a = mockTableData[0];
   const b = mockTableData[1];
@@ -177,6 +194,17 @@ function RunningReport() {
     <div>
       {/* 测试信息 */}
       <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 24, fontSize: 13 }}>
+        <span>
+          <span style={{ color: '#666' }}>流量分组：</span>
+          <Select
+            value={selectedGroup}
+            onChange={setSelectedGroup}
+            style={{ width: 160 }}
+            placeholder="流量分组"
+            options={groupOptions}
+            size="small"
+          />
+        </span>
         <span>
           <span style={{ color: '#666' }}>测试名称：</span>
           <span style={{ fontWeight: 500 }}>瀑布流广告位eCPM优化测试</span>

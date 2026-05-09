@@ -77,6 +77,23 @@ function generateHourlyData(): TableRow[] {
 export default function HourlyReport() {
   const [queryDate, setQueryDate] = useState<dayjs.Dayjs>(dayjs());
   const [dataMetric, setDataMetric] = useState('revenuePerMille');
+  const [selectedGroup, setSelectedGroup] = useState<string>('默认分组');
+
+  const groupOptions = useMemo(() => {
+    try {
+      const saved = localStorage.getItem('waterfall_scenes');
+      if (!saved) return [{ label: '默认分组', value: '默认分组' }];
+      const scenes = JSON.parse(saved) as { groups?: { name: string }[] }[];
+      const names = new Set<string>();
+      scenes.forEach((scene) => {
+        scene.groups?.forEach((g) => names.add(g.name));
+      });
+      const options = Array.from(names).map((name) => ({ label: name, value: name }));
+      return options.length > 0 ? options : [{ label: '默认分组', value: '默认分组' }];
+    } catch {
+      return [{ label: '默认分组', value: '默认分组' }];
+    }
+  }, []);
 
   const tableData = useMemo(() => generateHourlyData(), []);
 
@@ -177,6 +194,15 @@ export default function HourlyReport() {
             disabledDate={(current) => {
               return current && current > dayjs().endOf('day');
             }}
+          />
+        </Col>
+        <Col>
+          <Select
+            value={selectedGroup}
+            onChange={setSelectedGroup}
+            style={{ width: 160 }}
+            placeholder="流量分组"
+            options={groupOptions}
           />
         </Col>
       </Row>
